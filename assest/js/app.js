@@ -72,86 +72,92 @@ function closeModal() {
 }
 
 // Fetch Insert New Row
-// function insertNewRow(tableName, newInfoObj) {
-//     const { data, error } = supabaseCon
-//         .from(tableName)
-//         .insert([newInfoObj])
-//         .select()
-//     if (error) return error
+async function insertNewRow(tableName, newInfoObj) {
+    const { error } = await supabaseCon
+        .from(tableName)
+        .insert([newInfoObj])
+    if (error) {
+        return false
+    } else {
+        return true
+    }
 
-// }
+}
 
-
-
-// loginBtn.addEventListener('click', () => {
-//     const regexValidateEmail = /^([\w]+.?\w+)+@([a-z]{3,5}).([a-z]{2,3})/
-//     const regexValidatePass = /^[A-Z]+(\w+[#,%,*,\&,$])\w*/
-
-//     const emailInput = document.querySelector('.login .email-input')
-//     const passwordInput = document.querySelector('.login .password-input')
-//     const modalContainer = document.querySelector('.modal')
-//     modalContainer.classList.add('active')
-//     const validateEmail = validateInput(emailInput, regexValidateEmail)
-//     const validatePass = validateInput(passwordInput, regexValidatePass)
-
-//     const resultValidate = validateEmail && validatePass
-
-//     if (resultValidate) {
-//         showModalContent(modalContainer, true, 'Login')
-//     } else {
-//         showModalContent(modalContainer, false, 'Login')
-//     }
+// Fetch Get User filter by email
+async function getInfoUser(tableName, emailUser, passwordUser) {
+    const { data, error } = await supabaseCon
+        .from(tableName)
+        .select()
+        .eq('email', emailUser, 'password', passwordUser)
+    if (error) {
+        return false
+    }
+    if (data) {
+        return data
+    }
+}
 
 
-// })
-
-// signupBtn.addEventListener('click',  () => {
-//     const regexValidateName = /^[\w]{3,12}/
-//     const regexValidateEmail = /^([\w]+.?\w+)+@([a-z]{3,5}).([a-z]{2,3})/
-//     const regexValidatePass = /[\w{3,12}]/
-
-//     const nameInput = document.querySelector('.signup .name-input')
-//     const emailInput = document.querySelector('.signup .email-input')
-//     const passwordInput = document.querySelector('.signup .password-input')
-
-//     const validateName = validateInput(nameInput, regexValidateName)
-//     const validateEmail = validateInput(emailInput, regexValidateEmail)
-//     const validatePass = validateInput(passwordInput, regexValidatePass)
-
-//     const resultValidate = validateEmail && validatePass && validateName
-//     let newUser = {
-//         name: nameInput.value,
-//         email: emailInput.value,
-//         password: passwordInput.value
-//     }
-
-//     if (resultValidate) {
-//         insertNewRow(newUser)
-
-//     } else {
-//         showModalContent(modalContainer, false, 'Register')
-//     }
-// })
+loginBtn.addEventListener('click', async () => {
 
 
-// let newUser = {
-//     name: 'ali',
-//     email: 'mehdi@gmail.com',
-//     password: 12345
-// }
+    const emailInput = document.querySelector('.login .email-input')
+    const passwordInput = document.querySelector('.login .password-input')
+    const modalContainer = document.querySelector('.modal')
+    modalContainer.classList.add('active')
 
-// async function insertNewRow(newUser) {
-//     const { data,error } = await supabaseCon
-//     .from('users')
-//     .insert([{name:'ali',email:'ali@gmail.com', password: '123434'}])
-//     if (error) {
-//         console.log(error)
-//         return 
-//     };
-//     // if(data){
-//     //     console.log(data);
-//     // }
-//     showModalContent(modalContainer, true, 'Register')
-// }
+    const resultFetch = await  getInfoUser('users', emailInput.value.trim(), passwordInput.value.trim())
+    if (resultFetch) {
+        showModalContent(modalContainer, true, 'Login')
+    } else {
+        showModalContent(modalContainer, false, 'Login')
+    }
 
-// insertNewRow(newUser)
+
+})
+
+signupBtn.addEventListener('click', () => {
+
+
+    const infoNewUser = getInfoNewUser()
+    const resultFetch = insertNewRow('users', infoNewUser)
+
+    if (infoNewUser && resultFetch) {
+        showModalContent(modalContainer, true, 'Register')
+    } else {
+        showModalContent(modalContainer, false, 'Register')
+    }
+})
+
+
+function getInfoNewUser() {
+
+    const regexValidateName = /^[\w]{3,12}/
+    const regexValidateEmail = /^([\w]+.?\w+)+@([a-z]{3,5}).([a-z]{2,3})/
+    const regexValidatePass = /[\w{3,12}]/
+
+    const nameInput = document.querySelector('.signup .name-input')
+    const emailInput = document.querySelector('.signup .email-input')
+    const passwordInput = document.querySelector('.signup .password-input')
+
+    const validateName = validateInput(nameInput, regexValidateName)
+    const validateEmail = validateInput(emailInput, regexValidateEmail)
+    const validatePass = validateInput(passwordInput, regexValidatePass)
+
+    const resultValidate = validateEmail && validatePass && validateName
+    if (resultValidate) {
+        let newUser = {
+            name: nameInput.value,
+            email: emailInput.value,
+            password: passwordInput.value
+        }
+        return newUser
+    } else {
+        return false
+    }
+}
+
+
+
+
