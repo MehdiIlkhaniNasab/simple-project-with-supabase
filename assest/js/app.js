@@ -85,16 +85,16 @@ async function insertNewRow(tableName, newInfoObj) {
 }
 
 // Fetch Get User filter by email
-async function getInfoUser(tableName, emailUser, passwordUser) {
+async function getInfoUser(tableName, emailUser) {
     const { data, error } = await supabaseCon
         .from(tableName)
         .select()
-        .eq('email', emailUser, 'password', passwordUser)
+        .eq('email', emailUser)
     if (error) {
         return false
     }
     if (data) {
-        return data
+        return data[0]
     }
 }
 
@@ -106,9 +106,10 @@ loginBtn.addEventListener('click', async () => {
     const passwordInput = document.querySelector('.login .password-input')
     const modalContainer = document.querySelector('.modal')
     modalContainer.classList.add('active')
-
-    const resultFetch = await  getInfoUser('users', emailInput.value.trim(), passwordInput.value.trim())
-    if (resultFetch) {
+ 
+   const targetUser = await  getInfoUser('users', emailInput.value.trim())
+   
+    if (targetUser.password == passwordInput.value.trim()) {
         showModalContent(modalContainer, true, 'Login')
     } else {
         showModalContent(modalContainer, false, 'Login')
