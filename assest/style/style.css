@@ -310,11 +310,11 @@ html, body {
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
 }
 
-.btn-success{
+.modal-success .modal-btn{
   background-color: #28a745;
 }
 
-.btn-danger{
+.modal-danger .modal-btn{
   background-color: #dc3545;
 }
 
